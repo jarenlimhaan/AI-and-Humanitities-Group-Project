@@ -1,0 +1,74 @@
+{% include "layouts/base.html" %} {% block styles %}
+<link rel="stylesheet" href="../../static/css/chat.css" />
+{% endblock %} {% block content %}
+
+<div class="app">
+  <div class="wrapper">
+    <div class="chat-area">
+      <div class="chat-area-header">
+        <div class="chat-area-title">Vertex AI</div>
+        <div class="chat-area-group">
+          <img
+            class="chat-area-profile"
+            src="../static/images/bot.png"
+            alt=""
+          />
+        </div>
+      </div>
+      <div class="chat-area-main">
+        <div class="chat-msg">
+          <div class="chat-msg-profile">
+            <img class="chat-msg-img" src="../static/images/bot.png" alt="" />
+          </div>
+          <div class="chat-msg-content">
+            <div class="chat-msg-text">
+              Hello!, I am VERTEX AI, an assistant to guide you!
+            </div>
+            <div class="chat-msg-text">
+              <img
+                src="../static/images/spongebob.gif"
+              />
+            </div>
+            <div class="chat-msg-text">
+              Please send a screenshot or ask me anything!                                            
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-area-footer">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-paperclip"
+          id="uploadIcon"
+          style="cursor: pointer"
+        >
+          >
+          <path
+            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"
+          />
+        </svg>
+
+        <input type="text" id="userInput" placeholder="Type something here..." />
+        <form
+          action="/chat/upload"
+          method="POST"
+          enctype="multipart/form-data"
+          id="uploadForm"
+        >
+          <input type="file" name="file" id="fileInput" style="display: none" />
+          <button id="submitBtn">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block scripts%}
+<script src="../../static/js/chat.js"></script>
+{% endblock %}

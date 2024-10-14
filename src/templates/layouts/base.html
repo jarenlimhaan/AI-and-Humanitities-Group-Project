@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Microverse</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://vjs.zencdn.net/5-unsafe/video-js.css"
+    />
+    <link rel="stylesheet" href="../../static/css/style.css" />
+    <link rel="stylesheet" href="../../static/css/ele.css" />
+    {% block styles %} {% endblock %}
+  </head>
+  <body>
+    <div class="container">
+      {% include "includes/sidenav.html" %}
+      <div class="wrapper">
+        {% include "includes/header.html" %} {% block content %} {% endblock %}
+      </div>
+    </div>
+  </body>
+  <script
+    type="module"
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+  ></script>
+  <script
+    nomodule
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+  ></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  {% block scripts %}
+  {% endblock %}
+</html>

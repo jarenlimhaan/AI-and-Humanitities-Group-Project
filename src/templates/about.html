@@ -1,0 +1,78 @@
+{% include "layouts/base.html" %} {% block content %}
+<style>
+  .div {
+    background: rgba(0, 0, 0, 0);
+    width: 100%;
+    position: relative;
+    top: 40%;
+    transform: translateY(-50%);
+    margin: 0 auto;
+    padding: 30px 30px 10px;
+    box-shadow: 0 0 150px -20px rgba(0, 0, 0, 0.5);
+    z-index: 3;
+  }
+
+  P {
+    font-family: "Share Tech Mono", monospace;
+    color: #f5f5f5;
+    margin: 0 0 20px;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  span {
+    color: #f0c674;
+  }
+
+  i {
+    color: #8abeb7;
+  }
+
+  div a {
+    text-decoration: none;
+  }
+
+  b {
+    color: #81a2be;
+  }
+
+  @keyframes slide {
+    from {
+      right: -100px;
+      transform: rotate(360deg);
+      opacity: 0;
+    }
+    to {
+      right: 15px;
+      transform: rotate(0deg);
+      opacity: 1;
+    }
+  }
+</style>
+<div class="main-container">
+  <div class="main-header anim" style="--delay: 0s">About Us?</div>
+  <div class="div">
+    
+    <p><span>HAVE A NICE DAY :></span></p>
+  </div>
+</div>
+
+{% endblock %}
+
+<script>
+  var str = document.getElementsByClassName("div")[0].innerHTML.toString();
+  var i = 0;
+  document.getElementsByClassName("div")[0].innerHTML = "";
+
+  setTimeout(function () {
+    var se = setInterval(function () {
+      i++;
+      document.getElementsByClassName("div")[0].innerHTML =
+        str.slice(0, i) + "|";
+      if (i == str.length) {
+        clearInterval(se);
+        document.getElementsByClassName("div")[0].innerHTML = str;
+      }
+    }, 1);
+  }, 0);
+</script>

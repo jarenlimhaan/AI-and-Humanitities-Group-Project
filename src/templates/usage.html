@@ -1,0 +1,55 @@
+{% include "layouts/base.html" %} {% block content %}
+<div class="main-container show">
+  <div class="stream-area">
+    <div class="video-stream">
+      <video
+        id="my_video_1"
+        class="video-js vjs-default-skin anim"
+        width="640px"
+        height="267px"
+        controls
+        preload="metadata" 
+        data-setup='{ "aspectRatio":"940:620", "playbackRates": [1, 1.5, 2] }'
+      >
+        <source src="../static/videos/demo.MOV" type="video/mp4" />
+      </video>
+      <div class="video-detail">
+        <div class="video-content">
+          <div class="video-p-wrapper anim" style="--delay: 0.1s"></div>
+          <div class="video-p-title anim" style="--delay: 0.2s">
+            How to use SHAS?
+          </div>
+          <div class="video-p-subtitle anim" style="--delay: 0.3s">
+            Using the Smart Home Alarm System (SHAS) is designed to be intuitive
+            and engaging, ensuring a smoother wake-up experience.
+          </div>
+
+          <div class="video-p-subtitle anim" style="--delay: 0.3s">
+            To get started, users simply set their desired wake-up time through
+            the app:
+            <ol>
+              <li>
+                When the alarm goes off, it will initiate one of the built-in
+                games—a flappy bird or a maze challenge.
+              </li>
+              <li>
+                To turn off the alarm, users must complete the game, which
+                encourages full engagement and helps shake off sleepiness.
+              </li>
+              <li>
+                As users play, a built-in timer records the duration between the
+                alarm sounding and the completion of the game, providing
+                valuable insights into their waking habits.
+              </li>
+            </ol>
+            Users can review this data daily to identify patterns and make
+            necessary adjustments to their sleep routine. With SHAS, waking up
+            on time becomes a fun and interactive experience, ultimately
+            promoting healthier sleep habits.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
