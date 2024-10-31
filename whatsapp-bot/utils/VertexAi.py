@@ -16,7 +16,7 @@ class VertexAi:
     def split_message(self, text: str, max_length: int = 1600) -> list[str]:
         """Split a message by sentences or newline characters into smaller chunks."""
         # First, try to split by newline (\n) if present
-        parts = text.split("")
+        parts = text.split("-")
 
         # If any part exceeds max_length, split it further by punctuation (.!?)
         messages = []
@@ -65,8 +65,6 @@ class VertexAi:
         full_message = " ".join(
             " ".join(msg.text.text) for msg in response.query_result.response_messages if msg.text.text
         )
-
-        print(full_message)
 
         # Split the response into smaller chunks if needed
         return self.split_message(full_message)

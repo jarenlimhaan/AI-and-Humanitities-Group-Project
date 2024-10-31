@@ -1,10 +1,10 @@
 import vertexai
-from vertexai.generative_models import GenerativeModel, Part, SafetySetting
+from vertexai.generative_models import GenerativeModel, SafetySetting
 
 class GeminiClient:
 
     def __init__(self):
-        self.generation_config = generation_config = {"max_output_tokens": 8192, "temperature": 1, "top_p": 0.95,}
+        self.generation_config = {"max_output_tokens": 8192, "temperature": 1, "top_p": 0.95,}
         self.safety_settings = [
                 SafetySetting(
                     category=SafetySetting.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
