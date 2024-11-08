@@ -1,11 +1,9 @@
 {% include "layouts/base.html" %} {% block content %}
 <div class="main-container">
   <div class="main-header anim" style="--delay: 0s">Discover</div>
-  <div class="main-blogs" >
-    <div class="main-blog anim" style="--delay: 0.1s" onclick="navigate()">
-      <div class="main-blog__title">
-        How to use SHAS Smart Device?
-      </div>
+  <div class="main-blogs">
+    <div class="main-blog anim" style="--delay: 0.1s">
+      <div class="main-blog__title">How to use Digibank Services?</div>
       <div class="main-blog__author">
         <div class="author-img__wrapper">
           <svg
@@ -19,10 +17,7 @@
           >
             <path d="M20 6L9 17l-5-5" />
           </svg>
-          <img
-            class="author-img"
-            src="../static/images/citadel.png"
-          />
+          <img class="author-img" src="../static/images/bot.png" />
         </div>
         <div class="author-detail">
           <div class="author-name"></div>
@@ -31,15 +26,25 @@
           </div>
         </div>
       </div>
-      <button>Read More!</button>
-      <div class="main-blog__time">2 min</div>
+      <button>
+        <a
+          href="https://www.dbs.com.sg/personal/support/guide-ibanking.html"
+          style="text-decoration: none; color: white"
+          >Read More</a
+        >!
+      </button>
+      <div class="main-blog__time">10 min</div>
     </div>
 
-    <div class="main-blog anim" style="--delay: 0.2s" onclick="navigateToMicrobit()">
-      <div class="main-blog__title">Understand More About Micro:Bit!</div>
-      <button style="margin-bottom: 10%;">Read More!</button>
+    <div
+      class="main-blog anim"
+      style="--delay: 0.2s"
+      onclick="navigateToChat()"
+    >
+      <div class="main-blog__title">Chat with Digi!</div>
+      <button style="margin-bottom: 10%">Chat!</button>
       <div class="main-blog__author tips">
-        <div class="main-blog__time">7 min</div>
+        <div class="main-blog__time">1 min</div>
         <div class="author-img__wrapper">
           <svg
             viewBox="0 0 24 24"
@@ -52,35 +57,28 @@
           >
             <path d="M20 6L9 17l-5-5" />
           </svg>
-          <img
-            class="author-img"
-            src="../static/images/archer.jpeg"
-          />
+          <img class="author-img" src="../static/images/bot.png" />
         </div>
         <div class="author-detail">
           <div class="author-name"></div>
           <div class="author-info">10K views <span></span>3 weeks ago</div>
-          
         </div>
-        
       </div>
     </div>
   </div>
   <div class="small-header anim" style="--delay: 0.3s">Today's Insights</div>
   <div class="videos">
     <div class="video anim" style="--delay: 0.4s">
-      <div class="video-time">10 Seconds</div>
+      <div class="video-time">1 min 2 seconds</div>
       <div class="video-wrapper">
-        <video width="640px"
-        height="267px"
-        controls
-        preload="metadata" 
-       
-        data-setup='{ "aspectRatio":"940:620", "playbackRates": [1, 1.5, 2] }'>
-          <source
-            src="../static/videos/fix.mp4"
-            type="video/mp4"
-          />
+        <video
+          width="640px"
+          height="267px"
+          controls
+          preload="metadata"
+          data-setup='{ "aspectRatio":"940:620", "playbackRates": [1, 1.5, 2] }'
+        >
+          <source src="../static/videos/transfer.mp4" type="video/mp4" />
         </video>
         <div class="author-img__wrapper video-author">
           <svg
@@ -94,73 +92,70 @@
           >
             <path d="M20 6L9 17l-5-5" />
           </svg>
-          <img
-            class="author-img"
-            src="../static/images/avatar.png"
-          />
+          <img class="author-img" src="../static/images/avatar.png" />
         </div>
       </div>
-      <div class="video-by"></div>
-      <div class="video-name"></div>
+      <div class="video-by">DBS</div>
+      <div class="video-name">How to transfer money overseas?</div>
       <div class="video-view">
-        54K views<span class="seperate video-seperate"></span>1 week ago
+        20K views<span class="seperate video-seperate"></span>
       </div>
     </div>
 
     <div class="video anim" style="--delay: 0.4s">
-        <div class="video-time">10 Seconds</div>
-        <div class="video-wrapper">
-          <video width="640px"
+      <div class="video-time">3 mins</div>
+      <div class="video-wrapper">
+        <video
+          width="640px"
           height="267px"
           controls
-          preload="metadata" 
-         
-          data-setup='{ "aspectRatio":"940:620", "playbackRates": [1, 1.5, 2] }'>
-            <source
-              src="../static/videos/IS114_Video.mov"
-              type="video/mp4"
-            />
-          </video>
-          <div class="author-img__wrapper video-author">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="feather feather-check"
-            >
-              <path d="M20 6L9 17l-5-5" />
-            </svg>
-            <img
-              class="author-img"
-              src="../static/images/girl.png"
-            />
-          </div>
-        </div>
-        <div class="video-by">Huai En</div>
-        <div class="video-name">Why use SHAS?</div>
-        <div class="video-view">
-          100K views<span class="seperate video-seperate"></span>4 months ago
-        </div>
+          preload="metadata"
+          data-setup='{ "aspectRatio":"940:620", "playbackRates": [1, 1.5, 2] }'
+        >
+          <source src="../static/videos/remit.mp4" type="video/mp4" />
+        </video>
       </div>
+      <div class="video-by">DBS</div>
+      <div class="video-name">
+        DBS Remit - Overseas Transfer in 3 Simple Steps
+      </div>
+      <div class="video-view">
+        10K views<span class="seperate video-seperate"></span>
+      </div>
+    </div>
 
-    
-  </div>
-
- 
+    <div class="video anim" style="--delay: 0.4s">
+      <div class="video-time">44 seconds</div>
+      <div class="video-wrapper">
+        <video
+          width="640px"
+          height="267px"
+          controls
+          preload="metadata"
+          data-setup='{ "aspectRatio":"940:620", "playbackRates": [1, 1.5, 2] }'
+        >
+          <source src="../static/videos/transfer_locally.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="video-by">DBS</div>
+      <div class="video-name">
+        DBS digibank app - How to transfer funds locally
+      </div>
+      <div class="video-view">
+        31K views<span class="seperate video-seperate"></span>
+      </div>
+    </div>
   </div>
 </div>
 
 {% endblock %}
 
 <script>
-    const navigate = () => {
-        window.location.href = '/usage';
-    }
+  const navigate = () => {
+    window.location.href = "/usage";
+  };
 
-    const navigateToMicrobit = () => {
-        window.location.href = 'https://microbit.org';
-    }
+  const navigateToChat = () => {
+    window.location.href = "/chat";
+  };
 </script>

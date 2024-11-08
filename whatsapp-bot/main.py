@@ -5,6 +5,7 @@ import asyncio
 from typing import Optional
 from functools import partial
 import time
+import logging
 
 # Services 
 from services.VertexAi import VertexAi
@@ -19,7 +20,6 @@ from utils.func import create_response, create_interactive_response
 # Env 
 from utils.config import PROJECT_ID, LOCATION_ID, \
     AGENT_ID, ACCOUNT_SID, AUTH_TOKEN, WHATSAPP_NUMBER\
-    ,CONTENT_TEMPLATE_SID
 
 '''
 Init 
@@ -33,7 +33,13 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"]
 )
-previous_message = []
+
+## Configure the logging system
+logging.basicConfig(
+    level=logging.CRITICAL,                   
+    format='%(levelname)s: %(asctime)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',           
+)
 
 ## Clients 
 vertex_ai = VertexAi(PROJECT_ID, LOCATION_ID, AGENT_ID)
@@ -42,13 +48,17 @@ image_analyzer = ImageProcessor()
 speech_processor = SpeechProcessor()
 client = TwilioClient(ACCOUNT_SID, AUTH_TOKEN, WHATSAPP_NUMBER).client
 
+## Constants 
+curr_language = "English"
 
-## Helper functions 
+'''
+Helper functions 
+'''
 ## TODO: Move this to a separate file
 def get_vertex_response_with_retry(user_msg: str, max_retries: int = 3) -> list:
     """Get response from Vertex AI with retry logic"""
     for attempt in range(max_retries):
-        try:
+        try:                 
             response = vertex_ai.get_vertex_response(user_msg)
             if response:
                 return response
@@ -60,6 +70,40 @@ def get_vertex_response_with_retry(user_msg: str, max_retries: int = 3) -> list:
                 raise
     raise Exception("Failed to get response after all retries")
 
+def get_gemini_response(query: str) -> list[str]:
+    """Get response from Gemini with retry logic"""
+    response = gemini_client.model.generate_content(
+        [query],
+        generation_config=gemini_client.generation_config,
+        safety_settings=gemini_client.safety_settings,
+        stream=True,
+    )
+    return [msg.text for msg in response if msg.text]
+
+def reformat_final_message(lang: str, bot_responses: list[str], user_msg: str, image_analysis = None) -> list[str]:
+    bot_response = ''.join(bot_responses)
+    if "sorry" in bot_response.lower() or "rephrasing" in bot_response.lower():
+        if image_analysis != None:
+            logging.critical("State 1: Vertex AI can't respond to image analysis with/without user msg")
+            query = f"Help me a more friendly personality when answering this in the context of POSB digibank services and do not give me options and in {lang} and only in {lang}, the text: {image_analysis}"
+        else:
+            logging.critical("State 2: Vertex AI can't understand respond to the user message")
+            query = f"Help me adopt more a friendly personality when answering this in {lang} and only in {lang}, the text: {user_msg}"
+    else:
+        if "english" not in lang.lower() and len(bot_response) < 600:  
+            logging.critical("State 3: Vertex AI gave a response and it's not too long and user responded in a different language")
+            query  = f"Help me translate this message in {lang} and only in {lang}, do not give any other languages other than {lang} and give a more friendly personality when answering this in {lang}, the text: {bot_response}"  
+        elif "english" not in lang.lower() and len(bot_response) > 600:
+            logging.critical("State 4: Vertex AI gave a response but it's too long")
+            query = f"Help me translate this message in {lang} and only in {lang} and Help me to condense this shorter and more concise and give a more friendly personality when answering this, the text: {bot_response}"
+        elif len(bot_response) > 600:
+            logging.critical("State 5: Vertex AI gave a response but it's too long")
+            query = f"Help me to condense this shorter and more concise, the text: {bot_response} and just give a more friendly personality"
+        else:
+            logging.critical("State 6: Vertex AI gave a response and it's not too long")
+            return bot_responses
+    
+    return get_gemini_response(query)
 
 '''
 Main Endpoints
@@ -71,95 +115,75 @@ async def handle_whatsapp(
     NumMedia: int = Form(default=0),
     MediaUrl0: Optional[str] = Form(default=None),
     MediaContentType0: Optional[str] = Form(default=None),
-    ButtonText: Optional[str] = Form(default=None),
-    SelectedButtonId: Optional[str] = Form(default=None),
-    InteractiveButtonReplyId: Optional[str] = Form(default=None)
 ):
     """Handle incoming WhatsApp messages with combined text, image, and audio processing."""
-    global previous_message
+    global previous_bot_message, curr_language
     user_msg = Body.strip()
 
-    try:
-        # Handle interactive buttons
-        if any([ButtonText, SelectedButtonId, InteractiveButtonReplyId]):
-            original_message = "Help me translate this message to only hindi and only the raw hindi message: " + ' '.join(previous_message)
-            responses = gemini_client.model.generate_content(
-                [original_message],
-                generation_config=gemini_client.generation_config,
-                safety_settings=gemini_client.safety_settings,
-                stream=True,
-            )
-            send_message = ""
-            for msg in responses:
-                send_message = msg.text
-                if send_message:
-                    create_response(client, From, WHATSAPP_NUMBER, send_message)
-            return {"status": "success"}
+    ## Check if the user message's language and if is not english i need to reformat 
+    ## back to english to pass to vertex ai as it only understands english
+    if user_msg != '':
+        query = f"Give me in one word and one word only, what is this language and do not categorise the message, I just want the language: {user_msg}"  
+        responses = get_gemini_response(query)
+        curr_language = responses[0]
+        if "english" not in curr_language.lower():
+            query  = f"Help me translate this message back to english and only give me the message back in english: {user_msg}"  
+            responses = get_gemini_response(query)
+            user_msg = ' '.join(responses)
+    logging.critical(f"Lang Detected: {curr_language}")
 
-        elif NumMedia > 0:
+    image_analysis = None
+
+    try:
+        ## If video or audio is detected
+        if NumMedia > 0:
             if MediaContentType0 and MediaContentType0.startswith("audio/"):
-                print("Audio Detected: ", MediaUrl0)
+                logging.critical(f"Audio Detected: {MediaUrl0}")
                 
                 # Download and transcribe the audio
                 audio_bytes = await SpeechProcessor.download_audio(audio_url=MediaUrl0)
                 transcription = await SpeechProcessor.transcribe_audio(audio_bytes)
 
-                print(transcription)
-                
-                combined_input = f"{transcription}"
+                combined_input = f"{transcription} and I want to ask {user_msg}" if user_msg else transcription
                 combined_input = combined_input.replace("\n", " ")
                 
             elif MediaContentType0 and MediaContentType0.startswith("image/"):
-                print("Image Detected: ", MediaUrl0)
+                logging.critical(f"Image Detected: {MediaUrl0}")
                 
                 # Download and analyze the image
                 image = await ImageProcessor.download_image(MediaUrl0)
                 image_analysis = await ImageProcessor.analyze_image(image)
                 
-                combined_input = f"{image_analysis} and I want to ask {user_msg}"
+                combined_input = f"{image_analysis}  and I want to ask {user_msg}" if user_msg else image_analysis
                 combined_input = combined_input.replace("\n", " ")
-                
-            else:
-                return {"status": "error", "message": "Unsupported media type."}
 
-            # Process the combined input
             loop = asyncio.get_running_loop()
             bot_response = await loop.run_in_executor(
                 None,
                 partial(get_vertex_response_with_retry, combined_input, max_retries=3)
-            )
-
-            previous_message = [response for response in bot_response]
-
-            for msg in bot_response:
-                create_response(client, From, WHATSAPP_NUMBER, msg)
-            create_interactive_response(client, From, WHATSAPP_NUMBER, CONTENT_TEMPLATE_SID)
-
-            return {"status": "success"}
+            )  
 
         else:
-            print("Text Detected: ", user_msg)
+            logging.critical(f"Text Detected: {user_msg}")
             loop = asyncio.get_running_loop()
             bot_response = await loop.run_in_executor(
                 None,
                 partial(get_vertex_response_with_retry, user_msg, max_retries=3)
             )
 
-            previous_message = [response for response in bot_response]
-
-            for msg in bot_response:
-                create_response(client, From, WHATSAPP_NUMBER, msg)
-            create_interactive_response(client, From, WHATSAPP_NUMBER, CONTENT_TEMPLATE_SID)
-
-            return {"status": "success"}
+        # Send the final response
+        formatted_response = reformat_final_message(curr_language, bot_response, user_msg, image_analysis)
+        msg = '\n'.join(formatted_response)
+        print(formatted_response)
+        create_response(client, From, WHATSAPP_NUMBER, msg)
+        return {"status": "success"}
 
     except asyncio.TimeoutError:
-        print("Bot response timeout")
         create_response(client, From, WHATSAPP_NUMBER, "The response is taking too long. Please try again later.")
         return {"status": "error", "message": "Bot response timeout"}
 
     except Exception as e:
-        print(f"Error occurred while processing the message: {str(e)}")
+        logging.critical(f"Error occurred while processing the message: {str(e)}")
         error_msg = (
             "I apologize, but I'm having trouble processing your message. "
             "Please try again later."
