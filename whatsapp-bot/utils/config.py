@@ -5,7 +5,7 @@ import os
 current_directory = os.getcwd()
 
 # Specify the path to your .env file
-dotenv_path = 'utils\.env'  # Replace with the actual path to your .env file
+dotenv_path = './utils/.env'  # Replace with the actual path to your .env file
 load_dotenv(dotenv_path)
 
 '''

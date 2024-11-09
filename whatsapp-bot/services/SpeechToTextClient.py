@@ -20,7 +20,7 @@ class SpeechProcessor:
     async def transcribe_audio(audio_bytes: bytes) -> str:
         """Transcribe audio using Google Cloud Speech-to-Text API"""
         # Set up the Google Cloud Speech client
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "services/key.json"
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./services/key.json"
         client = speech.SpeechClient()
 
         # Configure the audio and request settings

@@ -22,7 +22,7 @@ class ImageProcessor:
     async def analyze_image(image: Image.Image) -> str:
         """Analyze an image using Google Cloud Vision API"""
         # Set up the Google Cloud Vision client
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "services/key.json"
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./services/key.json"
         client = vision.ImageAnnotatorClient()
 
         # Convert the PIL Image to a bytes object
