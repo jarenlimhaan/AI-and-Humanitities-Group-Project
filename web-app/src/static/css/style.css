@@ -368,7 +368,7 @@ button {
 
 .main-blog {
   background-image: url("../images/banner.jpeg");
-  background-size: 80%;
+  background-size: 90%;
   background-position-x: 150px;
   background-color: #31abbd;
   display: flex;
@@ -385,10 +385,11 @@ button {
 .main-blog + .main-blog {
   margin-left: 20px;
   width: 35%;
-  background-image: url("../images/banner2.png");
-  background-color: fi;
+  background-position-x: 50px;
+  background-image: url("../images/navplanner.png");
+  background-color: #31abbd;
   background-position-x: 0;
-  background-size: 120%;
+  background-size: 100%;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
   filter: saturate(1.4);
 }

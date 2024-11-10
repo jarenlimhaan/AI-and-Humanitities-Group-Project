@@ -15,7 +15,7 @@ from services.ImageAnalyzer import ImageProcessor
 from services.SpeechToTextClient import SpeechProcessor
 
 # Utils 
-from utils.func import create_response, create_interactive_response
+from utils.func import create_response
 
 # Env 
 from utils.config import PROJECT_ID, LOCATION_ID, \
@@ -153,9 +153,10 @@ async def handle_whatsapp(
                 # Download and analyze the image
                 image = await ImageProcessor.download_image(MediaUrl0)
                 image_analysis = await ImageProcessor.analyze_image(image)
-                
                 combined_input = f"{image_analysis}  and I want to ask {user_msg}" if user_msg else image_analysis
                 combined_input = combined_input.replace("\n", " ")
+
+  
 
             loop = asyncio.get_running_loop()
             bot_response = await loop.run_in_executor(

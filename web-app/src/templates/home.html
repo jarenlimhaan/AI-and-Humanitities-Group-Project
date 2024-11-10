@@ -36,15 +36,19 @@
       <div class="main-blog__time">10 min</div>
     </div>
 
-    <div
-      class="main-blog anim"
-      style="--delay: 0.2s"
-      onclick="navigateToChat()"
-    >
-      <div class="main-blog__title">Chat with Digi!</div>
-      <button style="margin-bottom: 10%">Chat!</button>
+    <div class="main-blog anim" style="--delay: 0.2s">
+      <div class="main-blog__title">Plan your finances with NAV Planner!</div>
+
       <div class="main-blog__author tips">
-        <div class="main-blog__time">1 min</div>
+        <div class="main-blog__time" style="background-color: none;">
+        
+            <a
+              href="https://www.dbs.com.sg/personal/deposits/digital-services/nav-planner"
+              style="text-decoration: none; color: white"
+              >Find Out More</a
+            >!
+
+        </div>
         <div class="author-img__wrapper">
           <svg
             viewBox="0 0 24 24"
@@ -58,10 +62,7 @@
             <path d="M20 6L9 17l-5-5" />
           </svg>
           <img class="author-img" src="../static/images/bot.png" />
-        </div>
-        <div class="author-detail">
-          <div class="author-name"></div>
-          <div class="author-info">10K views <span></span>3 weeks ago</div>
+          
         </div>
       </div>
     </div>
@@ -80,7 +81,6 @@
         >
           <source src="../static/videos/transfer.mp4" type="video/mp4" />
         </video>
-      
       </div>
       <div class="video-by">DBS</div>
       <div class="video-name">How to transfer money overseas?</div>
@@ -121,7 +121,10 @@
           preload="metadata"
           data-setup='{ "aspectRatio":"940:620", "playbackRates": [1, 1.5, 2] }'
         >
-          <source src="../static/videos/transfer_locally.mp4" type="video/mp4" />
+          <source
+            src="../static/videos/transfer_locally.mp4"
+            type="video/mp4"
+          />
         </video>
       </div>
       <div class="video-by">DBS</div>
