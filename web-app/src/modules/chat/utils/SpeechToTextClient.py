@@ -1,42 +1,55 @@
 import os
 import glob
-from google.cloud import speech
-from google.cloud.speech_v1 import types
+from google.cloud import speech_v1
+from pydub import AudioSegment
 
 class SpeechProcessor:
-
     @staticmethod
-    async def transcribe_audio() -> str:
+    def transcribe_audio() -> str:
         """Transcribe the latest uploaded audio file using Google Cloud Speech-to-Text API"""
+        try:
+            # List all audio files in the directory and get the latest file
+            files = glob.glob(os.path.join('src/static/audio/', '*'))
+            if not files:
+                return 'No audio files uploaded yet.'
 
-        # List all audio files in the directory and get the latest file
-        files = glob.glob(os.path.join('src/static/audio/', '*'))
-        if not files:
-            return 'No audio files uploaded yet.', 404
+            latest_file = max(files, key=os.path.getmtime)
+            print(f"Processing latest audio file: {latest_file}")
 
-        latest_file = max(files, key=os.path.getmtime)
+            # Read the latest audio file as bytes
+            with open(latest_file, 'rb') as audio_file:
+                audio_bytes = audio_file.read()
 
-        # Read the latest audio file as bytes
-        with open(latest_file, 'rb') as audio_file:
-            audio_bytes = audio_file.read()
+            # Set up the Google Cloud Speech client
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "src/modules/chat/utils/key.json"
+            client = speech_v1.SpeechClient()
 
-        # Set up the Google Cloud Speech client
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "src/modules/chat/utils/key.json"
-        client = speech.SpeechClient()
+            # Configure the audio and request settings
+            audio = speech_v1.RecognitionAudio(content=audio_bytes)
+            config = speech_v1.RecognitionConfig(
+                encoding=speech_v1.RecognitionConfig.AudioEncoding.LINEAR16,
+                sample_rate_hertz=16000,
+                language_code="en-US",
+                enable_automatic_punctuation=True,
+                audio_channel_count=1,
+            )
 
-        # Configure the audio and request settings
-        audio = types.RecognitionAudio(content=audio_bytes)
-        config = types.RecognitionConfig(
-            encoding=speech.RecognitionConfig.AudioEncoding.OGG_OPUS,
-            sample_rate_hertz=16000,  # Adjust this according to your audio file's settings
-            language_code="en-SG",
-        )
+            # Perform transcription
+            print("Sending request to Google Speech-to-Text...")
+            response = client.recognize(config=config, audio=audio)
+            print(f"Got response: {response}")
 
-        # Perform transcription
-        response = client.recognize(config=config, audio=audio)
+            # Extract transcript from response
+            if response.results:
+                transcript = " ".join(
+                    result.alternatives[0].transcript 
+                    for result in response.results
+                )
+                print(f"Transcribed text: {transcript}")
+                return transcript
+                
+            return "I'm sorry, but I couldn't transcribe any audio."
 
-        # Extract transcript from response
-        if response.results:
-            transcript = " ".join(result.alternatives[0].transcript for result in response.results)
-            return transcript
-        return "I'm sorry, but I couldn't transcribe any audio."
+        except Exception as e:
+            print(f"Transcription error: {str(e)}")
+            return f"Error transcribing audio: {str(e)}"

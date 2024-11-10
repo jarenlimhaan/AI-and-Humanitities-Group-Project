@@ -4,7 +4,6 @@ from werkzeug.utils import secure_filename
 import os
 import logging
 import time
-import glob
 
 ## Third-Party Imports
 from .utils.VertexAi import VertexAi
@@ -62,7 +61,12 @@ def get_gemini_response(query: str) -> list[str]:
         safety_settings=gemini_client.safety_settings,
         stream=True,
     )
-    return [msg.text for msg in response if msg.text]
+    response_text = [msg.text.strip() for msg in response if msg.text]
+
+    # Combine the first two elements and keep the rest as they are
+    if len(response_text) >= 2:
+        response_text = [response_text[0] + ' ' + response_text[1]] + response_text[2:]
+    return response_text
 
 def reformat_final_message(lang: str, bot_responses: list[str], user_msg: str, image_analysis = None) -> list[str]:
     bot_response = ''.join(bot_responses)
@@ -101,6 +105,22 @@ def upload_file():
         filename = secure_filename(file.filename)
         # Define the path where the file will be saved
         filepath = os.path.join('src/static/upload/', filename)
+
+        # Save the file
+        file.save(filepath)
+        return "success"
+    
+@chat_blueprint.route('/upload-audio', methods=['POST'])
+def upload_audio():
+
+    file = request.files['audio']
+
+    # If a file is selected, save it to the desired location
+    if file:
+        # Ensure the filename is safe to use
+        filename = secure_filename(file.filename)
+        # Define the path where the file will be saved
+        filepath = os.path.join('src/static/audio/', filename)
 
         # Save the file
         file.save(filepath)
@@ -144,7 +164,7 @@ def handle_web_message():
 
     bot_response = get_vertex_response_with_retry(combined_input)
     formatted_response = reformat_final_message(curr_language, bot_response, user_msg, image_analysis)
-    return jsonify({"status": "success", "message": '<br>'.join(formatted_response)})
+    return jsonify({"status": "success", "message": '&nbsp;'.join(formatted_response)})
 
     # except Exception as e:
     #     logging.critical(f"Error occurred: {str(e)}")

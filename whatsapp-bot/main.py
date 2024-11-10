@@ -78,31 +78,29 @@ def get_gemini_response(query: str) -> list[str]:
         safety_settings=gemini_client.safety_settings,
         stream=True,
     )
-    return [msg.text for msg in response if msg.text]
+    response_text = [msg.text.strip() for msg in response if msg.text]
+
+    # Combine the first two elements and keep the rest as they are
+    if len(response_text) >= 2:
+        response_text = [response_text[0] + ' ' + response_text[1]] + response_text[2:]
+    return response_text
 
 def reformat_final_message(lang: str, bot_responses: list[str], user_msg: str, image_analysis = None) -> list[str]:
     bot_response = ''.join(bot_responses)
     if "sorry" in bot_response.lower() or "rephrasing" in bot_response.lower():
         if image_analysis != None:
             logging.critical("State 1: Vertex AI can't respond to image analysis with/without user msg")
-            query = f"Help me a more friendly personality when answering this in the context of POSB digibank services and do not give me options and in {lang} and only in {lang}, the text: {image_analysis}"
+            query = f"Help me a more  friendly personality and please add some emojis when answering, do not be aggresive when answering this in the context of POSB digibank services and do not give me options and in {lang} and only in {lang} and also condense the answer to be a bit shorter and give me in point forms, the text: {image_analysis}"
         else:
             logging.critical("State 2: Vertex AI can't understand respond to the user message")
-            query = f"Help me adopt more a friendly personality when answering this in {lang} and only in {lang}, the text: {user_msg}"
+            query = f"Help me adopt more a  friendly personality and please add some emojis when answering, do not be aggresive when answering this in the context of POSB digibank services and do not give me options when answering this in {lang} and only in {lang} and also condense the answer to be a bit shorter and give me in point forms, the text: {user_msg}"
     else:
-        if "english" not in lang.lower() and len(bot_response) < 600:  
-            logging.critical("State 3: Vertex AI gave a response and it's not too long and user responded in a different language")
-            query  = f"Help me translate this message in {lang} and only in {lang}, do not give any other languages other than {lang} and give a more friendly personality when answering this in {lang}, the text: {bot_response}"  
-        elif "english" not in lang.lower() and len(bot_response) > 600:
-            logging.critical("State 4: Vertex AI gave a response but it's too long")
-            query = f"Help me translate this message in {lang} and only in {lang} and Help me to condense this shorter and more concise and give a more friendly personality when answering this, the text: {bot_response}"
-        elif len(bot_response) > 600:
-            logging.critical("State 5: Vertex AI gave a response but it's too long")
-            query = f"Help me to condense this shorter and more concise, the text: {bot_response} and just give a more friendly personality"
+        if "english" not in lang.lower():
+            logging.critical("State 3: Vertex AI gave a response but user asked in another language")
+            query = f"Help me translate this message in {lang} and only in {lang} and making sure in the context of POSB digibank services and Help me to condense this answer to be abit shorter and give a more friendly  personality and please add some emojis when answering, do not be aggresive when answering this and give me in point forms, the text: {bot_response}"
         else:
-            logging.critical("State 6: Vertex AI gave a response and it's not too long")
-            return bot_responses
-    
+            logging.critical("State 4: Vertex AI gave a response")
+            query = f"Help me to condense this answer to abit shorter and making sure in the context of POSB digibank services, the text: {bot_response} and just give a more friendly  personality and please add some emojis when answering, do not be aggresive and give me in point forms when answering this"
     return get_gemini_response(query)
 
 '''
