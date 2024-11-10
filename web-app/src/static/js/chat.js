@@ -1,7 +1,7 @@
 var fileClicked = false;
 var audioClicked = false;
 
-const url = "127.0.0.1:5000"
+const url = "152.42.235.175:5000"
 
 let mediaRecorder;
 let audioChunks = [];
