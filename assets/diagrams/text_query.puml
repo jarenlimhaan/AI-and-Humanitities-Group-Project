@@ -1,0 +1,21 @@
+@startuml
+actor User
+participant "Chatbot App" as Chatbot
+participant "Gemini AI" as Gemini
+participant "Vertex AI" as Vertex
+
+User -> Chatbot : Send message
+Chatbot -> Chatbot : Detects language
+alt Message is not in English
+    Chatbot -> Gemini : Translate message to English
+    Gemini --> Chatbot : Translated message
+end
+
+Chatbot -> Vertex : Pass English message to Vertex AI
+Vertex --> Chatbot : Generate response in English
+
+Chatbot -> Gemini : Reformat and translate response to original language
+Gemini --> Chatbot : Reformatted response
+
+Chatbot -> User : Send formatted response back
+@enduml

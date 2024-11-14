@@ -1,0 +1,20 @@
+@startuml
+actor User
+participant "Chatbot App" as Chatbot
+participant "Image Processor" as ImageProcessor
+participant "Vertex AI" as Vertex
+participant "Gemini AI" as Gemini
+
+User -> Chatbot : Send message (image)
+Chatbot -> Chatbot : Detects message as image
+Chatbot -> ImageProcessor : Process image content
+ImageProcessor --> Chatbot : Image analysis result
+
+Chatbot -> Vertex : Pass image analysis (in English) to Vertex AI
+Vertex --> Chatbot : English response
+
+Chatbot -> Gemini : Reformat and translate response to original language
+Gemini --> Chatbot : Reformatted response
+
+Chatbot -> User : Send formatted response back
+@enduml

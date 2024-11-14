@@ -73,17 +73,17 @@ def reformat_final_message(lang: str, bot_responses: list[str], user_msg: str, i
     if "sorry" in bot_response.lower() or "rephrasing" in bot_response.lower():
         if image_analysis != None:
             logging.critical("State 1: Vertex AI can't respond to image analysis with/without user msg")
-            query = f"Help me a more  friendly personality and please add some emojis when answering, do not be aggresive when answering this in the context of POSB digibank services and do not give me options and in {lang} and only in {lang} and also condense the answer to be a bit shorter, the text: {image_analysis}"
+            query = f"Help me a more  friendly personality and please add some emojis when answering, do not be aggresive when answering this in the context of DBS digibank services and do not give me options and in {lang} and only in {lang} and also condense the answer to be a bit shorter and give me in point forms, the text: {image_analysis}"
         else:
             logging.critical("State 2: Vertex AI can't understand respond to the user message")
-            query = f"Help me adopt more a  friendly personality and please add some emojis when answering, do not be aggresive when answering this in the context of POSB digibank services and do not give me options when answering this in {lang} and only in {lang} and also condense the answer to be a bit shorter , the text: {user_msg}"
+            query = f"Help me adopt more a  friendly personality and please add some emojis when answering, do not be aggresive when answering this in the context of DBS digibank services and do not give me options when answering this in {lang} and only in {lang} and also condense the answer to be a bit shorter and give me in point forms, the text: {user_msg}"
     else:
         if "english" not in lang.lower():
             logging.critical("State 3: Vertex AI gave a response but user asked in another language")
-            query = f"Help me translate this message in {lang} and only in {lang} and making sure in the context of POSB digibank services and Help me to condense this answer to be abit shorter and give a more friendly  personality and please add some emojis when answering, do not be aggresive when answering this, the text: {bot_response}"
+            query = f"Help me translate this message in {lang} and only in {lang} and making sure in the context of DBS digibank services and do not give me option and Help me to condense this answer to be abit shorter and give a more friendly  personality and please add some emojis when answering, do not be aggresive when answering this and give me in point forms, the text: {bot_response}"
         else:
             logging.critical("State 4: Vertex AI gave a response")
-            query = f"Help me to condense this answer to abit shorter and making sure in the context of POSB digibank services, the text: {bot_response} and just give a more friendly  personality and please add some emojis when answering, do not be aggresive when answering this"
+            query = f"Help me to condense this answer to abit shorter and making sure in the context of DBS digibank services and do not give me option, the text: {bot_response} and just give a more friendly  personality and please add some emojis when answering, do not be aggresive and give me in point forms when answering this"
     return get_gemini_response(query)
 
 

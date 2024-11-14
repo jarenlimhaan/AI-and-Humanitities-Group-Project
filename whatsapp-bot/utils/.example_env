@@ -1,0 +1,9 @@
+## Vertex AI - Model
+PROJECT_ID = 
+LOCATION_ID = 
+AGENT_ID = 
+
+## Twilio - WhatsApp
+ACCOUNT_SID = 
+AUTH_TOKEN = 
+WHATSAPP_NUMBER = 

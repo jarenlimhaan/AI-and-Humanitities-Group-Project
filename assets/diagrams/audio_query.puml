@@ -1,0 +1,20 @@
+@startuml
+actor User
+participant "Chatbot App" as Chatbot
+participant "Speech Processor" as SpeechProcessor
+participant "Vertex AI" as Vertex
+participant "Gemini AI" as Gemini
+
+User -> Chatbot : Send message (audio)
+Chatbot -> Chatbot : Detects message as audio
+Chatbot -> SpeechProcessor : Transcribe audio to text
+SpeechProcessor --> Chatbot : Transcribed text (in English)
+
+Chatbot -> Vertex : Pass transcribed text to Vertex AI
+Vertex --> Chatbot : English response
+
+Chatbot -> Gemini : Reformat and translate response to original language
+Gemini --> Chatbot : Reformatted response
+
+Chatbot -> User : Send formatted response back
+@enduml

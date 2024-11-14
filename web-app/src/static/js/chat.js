@@ -52,7 +52,7 @@ async function initRecorder() {
 }
 
 // Call initRecorder when the page loads
-document.addEventListener("DOMContentLoaded", initRecorder);
+// document.addEventListener("DOMContentLoaded", initRecorder);
 
 document.getElementById("uploadIcon").addEventListener("click", function () {
   document.getElementById("fileInput").click();
